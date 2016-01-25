@@ -13,8 +13,8 @@ Plugin 'bling/vim-airline'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'scrooloose/nerdtree'
 Plugin 'Xuyuanp/nerdtree-git-plugin'
-"Plugin 'Raimondi/delimitMate'
 Plugin 'myhere/vim-nodejs-complete'
+Plugin 'kchmck/vim-coffee-script'
 call vundle#end()
 
 "general settings
@@ -35,14 +35,13 @@ if has('gui_running')
 	set background=dark
 	autocmd vimenter * NERDTree
 else
-	colorscheme elflord
+	colorscheme evening
 endif
 
 "listchars
 let &listchars="tab:\u2506\ ,trail:\u25c0" 
 hi SpecialKey guibg=bg
 set list
-
 
 "autocomplete
 let g:EclimCompletionMethod = 'omnifunc'
@@ -53,9 +52,13 @@ let delimitMate_expand_cr = 1
 
 "airline
 set laststatus=2
-let g:airline_powerline_fonts=1
 let g:airline#extensions#tabline#enabled=1
-let g:airline_theme="papercolor"
+if has('gui_running')
+	let g:airline_powerline_fonts=1
+	let g:airline_theme="papercolor"
+else
+	let g:airline_theme="hybrid"
+endif
 
 "functions
 function! BClose()
