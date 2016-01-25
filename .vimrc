@@ -103,6 +103,12 @@ autocmd filetype java inoremap <silent> <C-s> <Esc>:w<CR>:Validate<CR>
 autocmd filetype java nnoremap <leader>m :JavaImport<CR>
 autocmd filetype java nnoremap <leader>p :JavaImpl<CR>
 
+"undo stuff
+set undofile
+set undodir=$home/.vim/undo
+set undolevels=1000
+set undoreload=10000
+
 "nerdtree
 let g:NERDTreeIndicatorMapCustom = {
     \ "Modified"  : "✹",
