@@ -15,6 +15,9 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'myhere/vim-nodejs-complete'
 Plugin 'kchmck/vim-coffee-script'
+Plugin 'leafgarland/typescript-vim'
+Plugin 'othree/html5.vim'
+Plugin 'digitaltoad/vim-pug'
 call vundle#end()
 
 "general settings
@@ -80,8 +83,8 @@ endfunction
 
 "key mappings
 let mapleader=','
-nnoremap <C-s> :w<CR>
-inoremap <C-s> <Esc>:w<CR>
+"nnoremap <C-s> :w<CR>
+"inoremap <C-s> <Esc>:w<CR>
 nnoremap <silent> <C-Left> :bp<CR>
 nnoremap <silent> <C-Right> :bn<CR>
 nnoremap <silent> <C-w> :call BClose()<CR>
@@ -102,6 +105,11 @@ nnoremap ; :
 autocmd filetype java inoremap <silent> <C-s> <Esc>:w<CR>:Validate<CR>
 autocmd filetype java nnoremap <leader>m :JavaImport<CR>
 autocmd filetype java nnoremap <leader>p :JavaImpl<CR>
+
+autocmd filetype tex nnoremap <C-s> :w<CR>:!pdflatex %<CR>
+autocmd filetype tex inoremap <C-s> <Esc>:w<CR>:!pdflatex %<CR>
+autocmd filetype cshtml set syntax=html
+autocmd filetype pug set syntax=pug
 
 "undo stuff
 set undofile
