@@ -9,10 +9,10 @@ filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
-Plugin 'bling/vim-airline'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'scrooloose/nerdtree'
-Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'myhere/vim-nodejs-complete'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'leafgarland/typescript-vim'
@@ -46,13 +46,6 @@ let &listchars="tab:\u2506\ ,trail:\u25c0"
 hi SpecialKey guibg=bg
 set list
 
-"autocomplete
-let g:EclimCompletionMethod = 'omnifunc'
-inoremap <C-Space> <C-x><C-o>
-
-"delimitmate
-let delimitMate_expand_cr = 1
-
 "airline
 set laststatus=2
 let g:airline#extensions#tabline#enabled=1
@@ -68,17 +61,6 @@ function! BClose()
 	let l:bufferId = bufnr("%")
 	:bn
 	execute ":bd". l:bufferId
-endfunction
-function! JumpToClosingParenthesis()
-	let l:line = line('.')
-	let l:col = col('.')
-	let l:head = strpart(getline('.'), 0, l:col)
-	let l:tail = strpart(getline('.'), l:col)
-	let l:matchHead = matchstr(l:head, '\S')
-	let l:matchTail = matchstr(l:tail, ')')
-	if !empty(l:matchTail)
-		execute "normal! f)<CR>"
-	endif
 endfunction
 
 "key mappings
@@ -116,16 +98,3 @@ set undofile
 set undodir=$home/.vim/undo
 set undolevels=1000
 set undoreload=10000
-
-"nerdtree
-let g:NERDTreeIndicatorMapCustom = {
-    \ "Modified"  : "✹",
-    \ "Staged"    : "✚",
-    \ "Untracked" : "✭",
-    \ "Renamed"   : "➜",
-    \ "Unmerged"  : "═",
-    \ "Deleted"   : "✖",
-    \ "Dirty"     : "✗",
-    \ "Clean"     : "✔︎",
-    \ "Unknown"   : "?"
-    \ }
