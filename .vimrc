@@ -18,9 +18,12 @@ Plugin 'kchmck/vim-coffee-script'
 Plugin 'leafgarland/typescript-vim'
 Plugin 'othree/html5.vim'
 Plugin 'digitaltoad/vim-pug'
+Plugin 'kshenoy/vim-signature'
+Plugin 'chriskempson/base16-vim'
 call vundle#end()
 
 "general settings
+set spell spelllang=en_gb
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
