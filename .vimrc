@@ -18,9 +18,12 @@ Plugin 'kchmck/vim-coffee-script'
 Plugin 'leafgarland/typescript-vim'
 Plugin 'othree/html5.vim'
 Plugin 'digitaltoad/vim-pug'
+Plugin 'kshenoy/vim-signature'
+Plugin 'chriskempson/base16-vim'
 call vundle#end()
 
 "general settings
+set spell spelllang=en_gb
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
@@ -32,10 +35,10 @@ set nowrap
 syntax enable
 filetype plugin indent on
 
-"solarized
+"colorschemes
 if has('gui_running')
-	colorscheme solarized
-	set background=dark
+	colorscheme base16-default
+	"set background=dark
 	autocmd vimenter * NERDTree
 else
 	colorscheme evening
@@ -84,10 +87,6 @@ noremap <down> <nop>
 nnoremap ; :
 
 "conditional remaps
-autocmd filetype java inoremap <silent> <C-s> <Esc>:w<CR>:Validate<CR>
-autocmd filetype java nnoremap <leader>m :JavaImport<CR>
-autocmd filetype java nnoremap <leader>p :JavaImpl<CR>
-
 autocmd filetype tex nnoremap <C-s> :w<CR>:!pdflatex %<CR>
 autocmd filetype tex inoremap <C-s> <Esc>:w<CR>:!pdflatex %<CR>
 autocmd filetype cshtml set syntax=html
