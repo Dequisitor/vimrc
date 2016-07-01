@@ -23,6 +23,7 @@ Plugin 'chriskempson/base16-vim'
 call vundle#end()
 
 "general settings
+set directory=$HOME\\.vim\\.swp\\
 set spell spelllang=en_gb
 set tabstop=4
 set softtabstop=4
@@ -38,7 +39,7 @@ filetype plugin indent on
 "colorschemes
 if has('gui_running')
 	colorscheme base16-default
-	"set background=dark
+	set background=dark
 	autocmd vimenter * NERDTree
 else
 	colorscheme evening
@@ -70,6 +71,8 @@ endfunction
 let mapleader=','
 "nnoremap <C-s> :w<CR>
 "inoremap <C-s> <Esc>:w<CR>
+nnoremap <silent> <C-h> :bp<CR>
+nnoremap <silent> <C-l> :bn<CR>
 nnoremap <silent> <C-Left> :bp<CR>
 nnoremap <silent> <C-Right> :bn<CR>
 nnoremap <silent> <C-w> :call BClose()<CR>
@@ -93,7 +96,7 @@ autocmd filetype cshtml set syntax=html
 autocmd filetype pug set syntax=pug
 
 "undo stuff
-set undofile
 set undodir=$home/.vim/undo
 set undolevels=1000
 set undoreload=10000
+set undofile
