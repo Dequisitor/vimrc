@@ -85,7 +85,8 @@ nnoremap <silent> <Tab> :wincmd w<CR>
 nnoremap <silent> <leader>ev :vsplit $MYVIMRC<CR>
 nnoremap <leader>sv :source $MYVIMRC<CR>
 ""movements and frequently used keys
-noremap <leader>. <Esc>
+inoremap <leader>. <Esc>
+vnoremap <leader>. <Esc>
 inoremap <Esc> <nop>
 nnoremap L $
 nnoremap H ^
@@ -105,6 +106,7 @@ vnoremap <C-j> xp`[V`]
 ""folding
 nnoremap <leader>ft Vatzf
 nnoremap <leader>ff [{V%zf:noh<CR>
+nnoremap <space> za
 
 "spelling
 set spell spelllang=en_gb
