@@ -24,7 +24,6 @@ call vundle#end()
 
 "general settings
 set directory=$HOME\\.vim\\.swp\\
-set spell spelllang=en_gb
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
@@ -32,7 +31,14 @@ set smarttab
 set noexpandtab
 set cot=menu
 set number
+set relativenumber
 set nowrap
+set hidden
+set hlsearch
+set foldenable
+set foldmethod=manual
+set mousehide
+set incsearch
 syntax enable
 filetype plugin indent on
 
@@ -69,17 +75,17 @@ endfunction
 
 "key mappings
 let mapleader=','
-"nnoremap <C-s> :w<CR>
-"inoremap <C-s> <Esc>:w<CR>
+set timeoutlen=200
+""window navigation
 nnoremap <silent> <C-h> :bp<CR>
 nnoremap <silent> <C-l> :bn<CR>
-nnoremap <silent> <C-Left> :bp<CR>
-nnoremap <silent> <C-Right> :bn<CR>
 nnoremap <silent> <C-w> :call BClose()<CR>
 nnoremap <silent> <Tab> :wincmd w<CR>
+""vimrc stuff
 nnoremap <silent> <leader>ev :vsplit $MYVIMRC<CR>
 nnoremap <leader>sv :source $MYVIMRC<CR>
-inoremap <leader>. <Esc>
+""movements and frequently used keys
+noremap <leader>. <Esc>
 inoremap <Esc> <nop>
 nnoremap L $
 nnoremap H ^
@@ -88,6 +94,25 @@ noremap <right> <nop>
 noremap <up> <nop>
 noremap <down> <nop>
 nnoremap ; :
+nnoremap [[ [{
+nnoremap ]] ]}
+nnoremap <silent> <CR> :noh<CR>
+""text manipulation
+nnoremap <C-k> ddkP
+nnoremap <C-j> ddp
+vnoremap <C-k> xkP`[V`]
+vnoremap <C-j> xp`[V`]
+""folding
+nnoremap <leader>ft Vatzf
+nnoremap <leader>ff [{V%zf:noh<CR>
+
+"spelling
+set spell spelllang=en_gb
+iab teh the
+iab Teh The
+
+"autosave
+au Focuslost * :wa
 
 "conditional remaps
 autocmd filetype tex nnoremap <C-s> :w<CR>:!pdflatex %<CR>
@@ -96,7 +121,7 @@ autocmd filetype cshtml set syntax=html
 autocmd filetype pug set syntax=pug
 
 "undo stuff
-set undodir=$home/.vim/undo
+set undodir=$HOME/.vim/undo
 set undolevels=1000
 set undoreload=10000
 set undofile
