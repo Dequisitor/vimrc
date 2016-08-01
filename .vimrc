@@ -44,7 +44,7 @@ filetype plugin indent on
 
 "colorschemes
 if has('gui_running')
-	colorscheme base16-default
+	colorscheme base16-3024
 	set background=dark
 	autocmd vimenter * NERDTree
 else
@@ -68,9 +68,29 @@ endif
 
 "functions
 function! BClose()
-	let l:bufferId = bufnr("%")
-	:bn
-	execute ":bd". l:bufferId
+	let bufferId = bufnr("%")
+	execute "bprevious"
+	execute "bdelete " . bufferId
+endfunction
+
+function! NextIndent(fwd)
+	let l:line = line('.')
+	let l:column = col('.')
+	let l:lastLine = line('$')
+	let l:indent = indent(line)
+	let l:step = a:fwd ? 1 : -1
+	while (l:line > 0 && l:line <= l:lastLine)
+		let l:line = line + step
+		if (indent(l:line) == l:indent && strlen(getline(l:line)) > 0)
+			execute "normal " . l:line . "G"
+			execute "normal g^"
+			return
+		endif
+	endwhile
+endfunction
+
+function! Whatwhat(nom)
+	echo "this works " . a:nom
 endfunction
 
 "key mappings
@@ -97,6 +117,8 @@ noremap <down> <nop>
 nnoremap ; :
 nnoremap [[ [{
 nnoremap ]] ]}
+nnoremap <silent> {{ :call NextIndent(0)<CR>
+nnoremap <silent> }} :call NextIndent(1)<CR>
 nnoremap <silent> <CR> :noh<CR>
 ""text manipulation
 nnoremap <C-k> ddkP
