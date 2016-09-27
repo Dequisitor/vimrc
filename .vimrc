@@ -20,6 +20,7 @@ Plugin 'othree/html5.vim'
 Plugin 'digitaltoad/vim-pug'
 Plugin 'kshenoy/vim-signature'
 Plugin 'chriskempson/base16-vim'
+Plugin 'andrewradev/linediff.vim'
 call vundle#end()
 
 "general settings
@@ -52,7 +53,7 @@ else
 endif
 
 "listchars
-let &listchars="tab:\u2506\ ,trail:\u25c0" 
+let &listchars="tab:\u007c\ ,trail:\u25ca" 
 hi SpecialKey guibg=bg
 set list
 
@@ -67,7 +68,7 @@ else
 endif
 
 "functions
-function! BClose()
+function! BufferClose()
 	let bufferId = bufnr("%")
 	execute "bprevious"
 	execute "bdelete " . bufferId
@@ -89,8 +90,32 @@ function! NextIndent(fwd)
 	endwhile
 endfunction
 
-function! Whatwhat(nom)
-	echo "this works " . a:nom
+function! ToggleHtmlComment()
+	execute "normal m'"
+	let line = getline('.')
+	let comment = matchstr(line, '<!--.\+-->')
+	if empty(comment)
+		execute "normal I<!--"
+		execute "normal A-->"
+	else
+		s/<!--//
+		s/-->//
+	endif
+	execute "''"
+endfunction
+
+function! ToggleCssComment()
+	execute "normal m'"
+	let line = getline('.')
+	let comment = matchstr(line, '/\*.\+\*/')
+	if empty(comment)
+		execute "normal I/*"
+		execute "normal A*/"
+	else
+		s/\/\*//
+		s/\*\//
+	endif
+	execute "''"
 endfunction
 
 "key mappings
@@ -99,7 +124,7 @@ set timeoutlen=200
 ""window navigation
 nnoremap <silent> <C-h> :bp<CR>
 nnoremap <silent> <C-l> :bn<CR>
-nnoremap <silent> <C-w> :call BClose()<CR>
+nnoremap <silent> <C-w> :call BufferClose()<CR>
 nnoremap <silent> <Tab> :wincmd w<CR>
 ""vimrc stuff
 nnoremap <silent> <leader>ev :vsplit $MYVIMRC<CR>
@@ -107,9 +132,11 @@ nnoremap <leader>sv :source $MYVIMRC<CR>
 ""movements and frequently used keys
 inoremap <leader>. <Esc>
 vnoremap <leader>. <Esc>
+inoremap jj <Esc>
 inoremap <Esc> <nop>
 nnoremap L $
 nnoremap H ^
+nnoremap J Jx
 noremap <left> <nop>
 noremap <right> <nop>
 noremap <up> <nop>
@@ -129,20 +156,46 @@ vnoremap <C-j> xp`[V`]
 nnoremap <leader>ft Vatzf
 nnoremap <leader>ff [{V%zf:noh<CR>
 nnoremap <space> za
+"surrounding
+nnoremap ss( ciw()<Esc>P
+nnoremap ss) ciw()<Esc>P
+nnoremap ss" ciw""<Esc>P
+nnoremap ss' ciw''<Esc>P
 
 "spelling
 set spell spelllang=en_gb
 iab teh the
 iab Teh The
+iab lenght length
+iab weigth weight
+iab wieght weight
+iab wiegth weight
+iab reuqire require
+iab requrei require
+iab requier require
 
 "autosave
-au Focuslost * :wa
+"au Focuslost * :wa
+
+"autoreload vimrc
+augroup reload_vimrc " {
+	autocmd!
+	autocmd BufWritePost $MYVIMRC source $MYVIMRC
+augroup END " }
 
 "conditional remaps
-autocmd filetype tex nnoremap <C-s> :w<CR>:!pdflatex %<CR>
-autocmd filetype tex inoremap <C-s> <Esc>:w<CR>:!pdflatex %<CR>
-autocmd filetype cshtml set syntax=html
-autocmd filetype pug set syntax=pug
+augroup remaps
+	autocmd!
+	autocmd filetype tex nnoremap <C-s> :w<CR>:!pdflatex %<CR>
+	autocmd filetype tex inoremap <C-s> <Esc>:w<CR>:!pdflatex %<CR>
+	autocmd filetype cshtml set syntax=html
+	autocmd filetype pug set syntax=pug
+	autocmd filetype html nnoremap <buffer> <C-c> :call ToggleHtmlComment()<CR>
+	autocmd filetype html vnoremap <buffer> <C-c> "-c<!--<Esc>o<Esc>cc--><Esc>=="-P
+	autocmd filetype javascript nnoremap <buffer> <C-c> I//<Esc>
+	autocmd filetype javascript vnoremap <buffer> <C-c> "-c/*<Esc>o<Esc>cc*/<Esc>=="-P
+	autocmd filetype css nnoremap <buffer> <C-c> :call ToggleCssComment()<CR>
+augroup END
 
 "undo stuff
 set undodir=$HOME/.vim/undo
