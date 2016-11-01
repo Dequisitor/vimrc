@@ -1,7 +1,6 @@
 "encoding
 scriptencoding utf-8
 set encoding=utf-8
-set fileencoding=utf-8
 set fileencodings=ucs-bomb,utf-8,latin1
 
 set nocompatible
@@ -21,6 +20,8 @@ Plugin 'digitaltoad/vim-pug'
 Plugin 'kshenoy/vim-signature'
 Plugin 'chriskempson/base16-vim'
 Plugin 'andrewradev/linediff.vim'
+Plugin 'mattesgroeger/vim-bookmarks'
+Plugin 'kien/ctrlp.vim'
 call vundle#end()
 
 "general settings
@@ -36,8 +37,10 @@ set relativenumber
 set nowrap
 set hidden
 set hlsearch
+set ignorecase
 set foldenable
-set foldmethod=manual
+set foldmethod=indent
+set foldlevelstart=99
 set mousehide
 set incsearch
 syntax enable
@@ -45,7 +48,8 @@ filetype plugin indent on
 
 "colorschemes
 if has('gui_running')
-	colorscheme base16-3024
+	set guifont=DejaVu_Sans_Mono_for_Powerline:h11:cANSI
+	colorscheme base16-atelierdune
 	set background=dark
 	autocmd vimenter * NERDTree
 else
@@ -60,9 +64,12 @@ set list
 "airline
 set laststatus=2
 let g:airline#extensions#tabline#enabled=1
+let g:airline#extensions#tabline#fnamemod = ':t'
 if has('gui_running')
+	set encoding=utf-8
 	let g:airline_powerline_fonts=1
 	let g:airline_theme="papercolor"
+	let g:Powerline_symbols="fancy"
 else
 	let g:airline_theme="hybrid"
 endif
@@ -126,10 +133,10 @@ nnoremap <silent> <C-h> :bp<CR>
 nnoremap <silent> <C-l> :bn<CR>
 nnoremap <silent> <C-w> :call BufferClose()<CR>
 nnoremap <silent> <Tab> :wincmd w<CR>
-""vimrc stuff
-nnoremap <silent> <leader>ev :vsplit $MYVIMRC<CR>
-nnoremap <leader>sv :source $MYVIMRC<CR>
-""movements and frequently used keys
+"vimrc stuff
+nnoremap <silent> <leader>e :vsplit $MYVIMRC<CR>
+nnoremap <leader>s :source $MYVIMRC<CR>
+"movements and frequently used keys
 inoremap <leader>. <Esc>
 vnoremap <leader>. <Esc>
 inoremap jj <Esc>
@@ -147,12 +154,10 @@ nnoremap ]] ]}
 nnoremap <silent> {{ :call NextIndent(0)<CR>
 nnoremap <silent> }} :call NextIndent(1)<CR>
 nnoremap <silent> <CR> :noh<CR>
-""text manipulation
-nnoremap <C-k> ddkP
-nnoremap <C-j> ddp
-vnoremap <C-k> xkP`[V`]
-vnoremap <C-j> xp`[V`]
-""folding
+"text manipulation
+nnoremap <C-k> <C-e>
+nnoremap <C-j> <C-y>
+"folding
 nnoremap <leader>ft Vatzf
 nnoremap <leader>ff [{V%zf:noh<CR>
 nnoremap <space> za
@@ -161,6 +166,12 @@ nnoremap ss( ciw()<Esc>P
 nnoremap ss) ciw()<Esc>P
 nnoremap ss" ciw""<Esc>P
 nnoremap ss' ciw''<Esc>P
+"search
+nnoremap <C-f> "9yiw /<C-R>9<Enter>
+nnoremap <C-g> "9yiw :vimgrep /<C-R>9/ **\*.*<Enter>
+"other
+nnoremap <silent> <F3> :NERDTreeToggle<CR>
+inoremap <silent> <F3> <Esc>:NERDTreeToggle<CR>a
 
 "spelling
 set spell spelllang=en_gb
@@ -175,13 +186,13 @@ iab requrei require
 iab requier require
 
 "autosave
-"au Focuslost * :wa
+au Focuslost * :wa
 
 "autoreload vimrc
-augroup reload_vimrc " {
+augroup reload_vimrc
 	autocmd!
-	autocmd BufWritePost $MYVIMRC source $MYVIMRC
-augroup END " }
+	autocmd! reload_vimrc BufWritePost $MYVIMRC nested source $MYVIMRC | echom "reloaded " . $MYVIMRC
+augroup END
 
 "conditional remaps
 augroup remaps
@@ -192,6 +203,8 @@ augroup remaps
 	autocmd filetype pug set syntax=pug
 	autocmd filetype html nnoremap <buffer> <C-c> :call ToggleHtmlComment()<CR>
 	autocmd filetype html vnoremap <buffer> <C-c> "-c<!--<Esc>o<Esc>cc--><Esc>=="-P
+	autocmd filetype xml nnoremap <buffer> <C-c> :call ToggleHtmlComment()<CR>
+	autocmd filetype xml vnoremap <buffer> <C-c> "-c<!--<Esc>o<Esc>cc--><Esc>=="-P
 	autocmd filetype javascript nnoremap <buffer> <C-c> I//<Esc>
 	autocmd filetype javascript vnoremap <buffer> <C-c> "-c/*<Esc>o<Esc>cc*/<Esc>=="-P
 	autocmd filetype css nnoremap <buffer> <C-c> :call ToggleCssComment()<CR>
@@ -202,3 +215,20 @@ set undodir=$HOME/.vim/undo
 set undolevels=1000
 set undoreload=10000
 set undofile
+
+"Nerdtree settings
+let g:NERDTreeWinSize = 40
+"let g:NERDTreeDirArrowExpandable = '▸'
+"let g:NERDTreeDirArrowCollapsible = '▾'
+
+"bookmark settings
+let g:bookmark_sign = "\u266b"
+let g:bookmark_save_per_working_dir = 1
+let g:bookmark_highlight_lines = 1
+
+"highlights
+highlight BookmarkLine guibg=#009900 guifg=#ffffff gui=none
+highlight BookmarkSign guibg=NONE guifg=#009900 gui=none
+highlight Visual guibg=#ffffff guifg=#000000 gui=none
+highlight Folded guibg=NONE guifg=fg gui=none
+highlight Pmenu guibg=white guifg=black gui=bold
