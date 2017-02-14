@@ -13,7 +13,7 @@ Plugin 'othree/html5.vim'
 Plugin 'chriskempson/base16-vim'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-Plugin 'mattesgroeger/vim-bookmarks'
+"Plugin 'mattesgroeger/vim-bookmarks'
 "Plugin 'andrewradev/linediff.vim'
 Plugin 'w0rp/ale'
 Plugin 'kien/ctrlp.vim'
@@ -41,7 +41,7 @@ set relativenumber
 set nowrap
 set hidden
 set hlsearch
-set ignorecase
+"set ignorecase
 set scrolloff=5
 set foldenable
 set foldmethod=indent
@@ -152,6 +152,10 @@ nnoremap j gj
 nnoremap k gk
 nnoremap L $
 nnoremap H ^
+vnoremap L $
+vnoremap H ^
+nnoremap Y "+y
+vnoremap Y "+y
 "nnoremap J Jx
 noremap <left> <nop>
 noremap <right> <nop>
@@ -164,8 +168,8 @@ nnoremap <silent> {{ :call NextIndent(0)<CR>
 nnoremap <silent> }} :call NextIndent(1)<CR>
 nnoremap <silent> <CR> :noh<CR>
 "text manipulation
-nnoremap <C-k> 3<C-e>
-nnoremap <C-j> 3<C-y>
+nnoremap <C-k> 3<C-y>
+nnoremap <C-j> 3<C-e>
 "autocomplete
 inoremap <expr> <silent> <tab> TabComplete()
 "folding
@@ -214,6 +218,7 @@ augroup remaps
 	autocmd filetype less nnoremap <buffer> <C-c> :call ToggleCssComment()<CR>
 	autocmd BufReadPost quickfix nnoremap <buffer> <CR> :call QuickfixGoto()<CR>
 	autocmd BufReadPost quickfix nnoremap <buffer> q :q<CR>
+	autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 augroup END
 
 "undo stuff
@@ -240,7 +245,6 @@ let g:NERDTreeIndicatorMapCustom = {
 
 "bookmark settings
 let g:bookmark_sign = "\u266b"
-let g:bookmark_save_per_working_dir = 1
 let g:bookmark_highlight_lines = 1
 "let g:bookmark_no_default_key_mappings = 1
 nmap <leader><leader> <Plug>BookmarkToggle
