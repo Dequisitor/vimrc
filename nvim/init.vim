@@ -88,7 +88,7 @@ function! ToggleJSComment()
 	if empty(comment)
 		execute "normal I//"
 	else
-		s/^\/\///
+		s/\/\///
 	endif
 	execute "''"
 endfunction
