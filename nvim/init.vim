@@ -13,7 +13,7 @@ Plugin 'othree/html5.vim'
 Plugin 'chriskempson/base16-vim'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-"Plugin 'mattesgroeger/vim-bookmarks'
+Plugin 'mattesgroeger/vim-bookmarks'
 "Plugin 'andrewradev/linediff.vim'
 Plugin 'w0rp/ale'
 Plugin 'kien/ctrlp.vim'
@@ -57,11 +57,8 @@ set list
 
 "colorscheme
 set background=dark
-colorscheme gruvbox
-AirlineTheme gruvbox
-"colorscheme monokai
-"set guifont=DejaVu_Sans_Mono_for_Powerline:h11:cANSI
-"GuiFont DejaVuSansMonoForPowerline NF:h11
+colorscheme base16-atelier-dune
+AirlineTheme base16_atelierdune
 
 "functions
 function! BufferClose()
@@ -80,6 +77,18 @@ function! ToggleHtmlComment()
 	else
 		s/<!--//
 		s/-->//
+	endif
+	execute "''"
+endfunction
+
+function! ToggleJSComment()
+	execute "normal m'"
+	let line = getline('.')
+	let comment = matchstr(line, '//.\+$')
+	if empty(comment)
+		execute "normal I//"
+	else
+		s/^\/\///
 	endif
 	execute "''"
 endfunction
@@ -182,10 +191,7 @@ nnoremap <space> za
 "other
 nnoremap <silent> <F1> :NERDTreeToggle<CR>
 inoremap <silent> <F1> <Esc>:NERDTreeToggle<CR>a
-nnoremap <silent> <F2> :TagbarToggle<CR>
-inoremap <silent> <F2> <Esc>:TagbarToggle<CR>a
 nnoremap <F3> :call FindInCurrentDir()<CR>
-nnoremap <F4> :TernRefs<CR>
 nnoremap <Left> :cp<CR>
 nnoremap <Right> :cn<CR>
 
@@ -204,15 +210,13 @@ iab requier require
 "conditional remaps
 augroup remaps
 	autocmd!
-	autocmd filetype tex nnoremap <C-s> :w<CR>:!pdflatex %<CR>
-	autocmd filetype tex inoremap <C-s> <Esc>:w<CR>:!pdflatex %<CR>
 	autocmd filetype cshtml set syntax=html
 	autocmd filetype pug set syntax=pug
 	autocmd filetype html nnoremap <buffer> <C-c> :call ToggleHtmlComment()<CR>
 	autocmd filetype html vnoremap <buffer> <C-c> "-c<!--<Esc>o<Esc>cc--><Esc>=="-P
 	autocmd filetype xml nnoremap <buffer> <C-c> :call ToggleHtmlComment()<CR>
 	autocmd filetype xml vnoremap <buffer> <C-c> "-c<!--<Esc>o<Esc>cc--><Esc>=="-P
-	autocmd filetype javascript nnoremap <buffer> <C-c> I//<Esc>
+	autocmd filetype javascript nnoremap <buffer> <C-c> :call ToggleJSComment()<CR>
 	autocmd filetype javascript vnoremap <buffer> <C-c> "-c/*<Esc>o<Esc>cc*/<Esc>=="-P
 	autocmd filetype css nnoremap <buffer> <C-c> :call ToggleCssComment()<CR>
 	autocmd filetype less nnoremap <buffer> <C-c> :call ToggleCssComment()<CR>
@@ -273,7 +277,7 @@ let g:ale_linters = {
 
 "bookmark settings
 let g:bookmark_sign = "\u266b"
-let g:bookmark_save_per_working_dir = 1
+let g:bookmark_save_per_working_dir = 0
 let g:bookmark_highlight_lines = 1
 "let g:bookmark_no_default_key_mappings = 1
 nmap <leader><leader> <Plug>BookmarkToggle
@@ -298,7 +302,4 @@ set laststatus=2
 let g:airline#extensions#tabline#enabled=1
 let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline_powerline_fonts=1
-"let g:airline_theme="papercolor"
 let g:Powerline_symbols="fancy"
-
-
