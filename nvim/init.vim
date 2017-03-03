@@ -14,7 +14,6 @@ Plugin 'chriskempson/base16-vim'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'mattesgroeger/vim-bookmarks'
-"Plugin 'andrewradev/linediff.vim'
 Plugin 'w0rp/ale'
 Plugin 'kien/ctrlp.vim'
 Plugin 'pangloss/vim-javascript'
@@ -25,6 +24,9 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'morhetz/gruvbox'
 Plugin 'tpope/vim-surround'
 Plugin 'wellle/targets.vim'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'ervandew/supertab'
+Plugin 'mxw/vim-jsx'
 call vundle#end()
 
 "general settings
@@ -59,6 +61,7 @@ set list
 set background=dark
 colorscheme base16-atelier-dune
 AirlineTheme base16_atelierdune
+GuiFont DejaVuSansMonoForPowerline NF:h11
 
 "functions
 function! BufferClose()
@@ -84,7 +87,7 @@ endfunction
 function! ToggleJSComment()
 	execute "normal m'"
 	let line = getline('.')
-	let comment = matchstr(line, '//.\+$')
+	let comment = matchstr(line, '^\s*//.\+$')
 	if empty(comment)
 		execute "normal I//"
 	else
@@ -107,30 +110,6 @@ function! ToggleCssComment()
 	execute "''"
 endfunction
 
-function! TabComplete()
-	if pumvisible()
-		return "\<C-N>"
-	endif
-
-	let line = getline('.')
-	let substr = strpart(line, -1, col('.')+1)
-	let word = matchstr(substr, "[^ \t]*$")
-
-	if (strlen(word) == 0)
-		return "\t"
-	endif
-
-	"let hasPeriod = match(word, '\.') != -1
-	"let hasSlash = match(word, '\/') != -1
-	let shouldContinue = match(word, '[\.A-Za-z0-9]') != -1
-	if (shouldContinue)
-		return "\<C-X>\<C-O>"
-	else
-		return "\t"
-	endif
-
-endfunction
-
 function! FindInCurrentDir()
 	let word = expand("<cword>")
 	execute 'Ggrep ' . word
@@ -143,14 +122,14 @@ endfunction
 
 "key mappings
 let mapleader=','
-set timeoutlen=200
+set timeoutlen=500
 ""window navigation
 nnoremap <silent> <C-h> :bp<CR>
 nnoremap <silent> <C-l> :bn<CR>
 nnoremap <silent> <C-w> :call BufferClose()<CR>
 nnoremap <silent> <Tab> :wincmd w<CR>
 "vimrc stuff
-nnoremap <silent> <leader>e :vsplit $MYVIMRC<CR>
+nnoremap <silent> <leader>e :e $MYVIMRC<CR>
 nnoremap <leader>s :source $MYVIMRC<CR>
 "movements and frequently used keys
 inoremap <leader>. <Esc>
@@ -166,10 +145,6 @@ vnoremap H ^
 nnoremap Y "+y
 vnoremap Y "+y
 "nnoremap J Jx
-noremap <left> <nop>
-noremap <right> <nop>
-noremap <up> <nop>
-noremap <down> <nop>
 nnoremap ; :
 nnoremap [[ [{
 nnoremap ]] ]}
@@ -179,8 +154,6 @@ nnoremap <silent> <CR> :noh<CR>
 "text manipulation
 nnoremap <C-k> 3<C-y>
 nnoremap <C-j> 3<C-e>
-"autocomplete
-inoremap <expr> <silent> <tab> TabComplete()
 "folding
 nnoremap <leader>ft Vatzf
 nnoremap <leader>ff [{V%zf:noh<CR>
@@ -194,6 +167,8 @@ inoremap <silent> <F1> <Esc>:NERDTreeToggle<CR>a
 nnoremap <F3> :call FindInCurrentDir()<CR>
 nnoremap <Left> :cp<CR>
 nnoremap <Right> :cn<CR>
+nmap <Up> <Plug>(ale_previous_wrap)
+nmap <Down> <Plug>(ale_next_wrap)
 
 "spelling
 "set spell spelllang=en_gb
@@ -210,19 +185,28 @@ iab requier require
 "conditional remaps
 augroup remaps
 	autocmd!
-	autocmd filetype cshtml set syntax=html
 	autocmd filetype pug set syntax=pug
+
+	autocmd filetype cshtml set syntax=html
 	autocmd filetype html nnoremap <buffer> <C-c> :call ToggleHtmlComment()<CR>
 	autocmd filetype html vnoremap <buffer> <C-c> "-c<!--<Esc>o<Esc>cc--><Esc>=="-P
+	autocmd filetype html inoremap <S-CR> <br/>
+
 	autocmd filetype xml nnoremap <buffer> <C-c> :call ToggleHtmlComment()<CR>
 	autocmd filetype xml vnoremap <buffer> <C-c> "-c<!--<Esc>o<Esc>cc--><Esc>=="-P
-	autocmd filetype javascript nnoremap <buffer> <C-c> :call ToggleJSComment()<CR>
-	autocmd filetype javascript vnoremap <buffer> <C-c> "-c/*<Esc>o<Esc>cc*/<Esc>=="-P
+
 	autocmd filetype css nnoremap <buffer> <C-c> :call ToggleCssComment()<CR>
 	autocmd filetype less nnoremap <buffer> <C-c> :call ToggleCssComment()<CR>
+
 	autocmd BufReadPost quickfix nnoremap <buffer> <CR> :call QuickfixGoto()<CR>
 	autocmd BufReadPost quickfix nnoremap <buffer> q :q<CR>
+
 	autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+	autocmd filetype javascript nnoremap <buffer> <C-c> :call ToggleJSComment()<CR>
+	autocmd filetype javascript vnoremap <buffer> <C-c> "-c/*<Esc>o<Esc>cc*/<Esc>=="-P
+	"autocmd filetype javascript inoremap (<CR> (<CR>)O ")
+	"autocmd filetype javascript inoremap {<CR> {<CR>}O "}
 augroup END
 
 "undo stuff
@@ -269,10 +253,15 @@ let g:ale_sign_error = "E"
 let g:ale_sign_warning = "W"
 let g:ale_lint_on_text_changed = 1
 let g:ale_lint_delay = 200
-let g:ale_lint_on_enter = 0
+let g:ale_lint_on_enter = 1
 let g:ale_lint_on_save = 1
+let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
+let g:ale_linter_aliases = {'less': 'css'}
 let g:ale_linters = {
-			\'javascript': ['eslint']
+			\'javascript': ['jshint', 'eslint'],
+			\'less': ['stylelint'],
+			\'css': ['stylelint'],
+			\'html': ['htmlhint']
 			\}
 
 "bookmark settings
@@ -303,3 +292,7 @@ let g:airline#extensions#tabline#enabled=1
 let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline_powerline_fonts=1
 let g:Powerline_symbols="fancy"
+
+"targets.vim
+let g:targets_argOpening = '[(]'
+let g:targets_argClosing = '[)]'
